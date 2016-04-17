@@ -159,6 +159,7 @@ def install(args, parser, command='install'):
     else:
         default_packages = []
 
+    common.ensure_use_local(args)
     common.ensure_override_channels_requires_channel(args)
     channel_urls = args.channel or ()
 

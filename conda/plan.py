@@ -14,7 +14,7 @@ import sys
 import os
 from logging import getLogger
 from collections import defaultdict
-from os.path import abspath, basename, dirname, isfile, join, exists
+from os.path import abspath, basename, dirname, join, exists
 
 from conda import config
 from conda import install
@@ -244,8 +244,9 @@ def linked_actions(dists, prefix, force, index=None):
 
         if fetched_in and index is not None:
             # Test the MD5, and possibly re-fetch
+            fn = dist + '.tar.bz2'
             try:
-                if md5_file(fetched_in) != index[dist + '.tar.bz2']['md5']:
+                if md5_file(fetched_in) != index[fn]['md5']:
                     # RM_FETCHED now removes the extracted data too
                     actions[inst.RM_FETCHED].append(dist)
                     # Re-fetch, re-extract, re-link
