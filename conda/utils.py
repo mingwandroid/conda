@@ -7,7 +7,6 @@ import collections
 from functools import partial
 from os.path import abspath, isdir, join
 import os
-import re
 import subprocess
 import tempfile
 
@@ -181,47 +180,24 @@ def path_identity(path):
     return path
 
 
-def win_path_to_unix(path, root_prefix=""):
-    """Convert a path or ;-separated string of paths into a unix representation
-
-    Does not add cygdrive.  If you need that, set root_prefix to "/cygdrive"
-    """
-    path_re = '(?<![:/^a-zA-Z])([a-zA-Z]:[\/\\\\]+(?:[^:*?"<>|]+[\/\\\\]+)*[^:*?"<>|;\/\\\\]+?(?![a-zA-Z]:))'  # noqa
-
-    def _translation(found_path):
-        found = found_path.group(1).replace("\\", "/").replace(":", "").replace("//", "/")
-        return root_prefix + "/" + found
-    path = re.sub(path_re, _translation, path).replace(";/", ":/")
+def win_path_to_unix(path):
+    'Convert a path or ;-separated string of paths into a unix representation'
+    cmd = ['cygpath', '-t', 'unix', '-p', path]
+    try:
+        path = subprocess.check_output(cmd).decode('utf-8').replace('\n','')
+    except:
+        sys.exit('Error: Failed to run cygpath')
     return path
 
 
-def unix_path_to_win(path, root_prefix=""):
-    """Convert a path or :-separated string of paths into a Windows representation
-
-    Does not add cygdrive.  If you need that, set root_prefix to "/cygdrive"
-    """
-    if len(path) > 1 and (";" in path or (path[1] == ":" and path.count(":") == 1)):
-        # already a windows path
-        return path.replace("/", "\\")
-    path_re = root_prefix + r'(/[a-zA-Z]/(?:(?![:\s]/)[^:*?"<>])*)'
-
-    def _translation(found_path):
-        group = found_path.group(0)
-        return "{0}:{1}".format(group[len(root_prefix)+1],
-                                group[len(root_prefix)+2:].replace("/", "\\"))
-    translation = re.sub(path_re, _translation, path)
-    translation = re.sub(":([a-zA-Z]):\\\\",
-                         lambda match: ";" + match.group(0)[1] + ":\\",
-                         translation)
-    return translation
-
-
-# curry cygwin functions
-def win_path_to_cygwin(path):
-    return win_path_to_unix(path, "/cygdrive")
-
-def cygwin_path_to_win(path):
-    return unix_path_to_win(path, "/cygdrive")
+def unix_path_to_win(path):
+    'Convert a path or :-separated string of paths into a Windows representation'
+    cmd = ['cygpath', '-t', 'windows', '-p', path]
+    try:
+        path = subprocess.check_output(cmd).decode('utf-8').replace('\n','')
+    except:
+        sys.exit('Error: Failed to run cygpath')
+    return path
 
 
 def translate_stream(stream, translator):
@@ -369,8 +345,8 @@ if sys.platform == "win32":
             unix_shell_base,
             exe="bash.exe",
             binpath="/Scripts/",  # mind the trailing slash.
-            path_from=cygwin_path_to_win,
-            path_to=win_path_to_cygwin
+            path_from=unix_path_to_win,
+            path_to=win_path_to_unix
         ),
         # bash is whichever bash is on PATH.  If using Cygwin, you should use the cygwin
         #    entry instead.  The only major difference is that it handle's cygwin's /cygdrive
