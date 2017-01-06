@@ -19,6 +19,7 @@ class Arch(Enum):
     armv7l = 'armv7l'
     ppc64le = 'ppc64le'
     z = 'z'
+    imx351uc = 'imx351uc'
 
     @classmethod
     def from_sys(cls):
