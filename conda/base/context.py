@@ -212,7 +212,10 @@ class Context(Configuration):
 
     @property
     def pkgs_dirs(self):
-        return [pkgs_dir_from_envs_dir(envs_dir) for envs_dir in self.envs_dirs]
+        if self._pkgs_dirs:  # This may need to be changed to os.environ['CONDA_PKGS_DIRS']
+            return [pkgs_dir_from_tmp_pkgs_dir(pkgs_dir) for pkgs_dir in self._pkgs_dirs]
+        else:
+            return [pkgs_dir_from_envs_dir(envs_dir) for envs_dir in self.envs_dirs]
 
     @property
     def default_prefix(self):
@@ -321,10 +324,17 @@ def reset_context(search_path=SEARCH_PATH, argparse_args=None):
 
 
 def pkgs_dir_from_envs_dir(envs_dir):
-    if abspath(envs_dir) == abspath(join(context.root_dir, 'envs')):
-        return join(context.root_dir, 'pkgs32' if context.force_32bit else 'pkgs')
-    else:
-        return join(envs_dir, '.pkgs')
+    abspath_root_dir_envs = abspath(join(context.root_dir, 'envs'))
+    base_dir = envs_dir if abspath(envs_dir) != abspath_root_dir_envs else context.root_dir
+    dot = '.' if abspath(envs_dir) != abspath_root_dir_envs else ''
+    # This is really saying: if the os.environ['CONDA_SUBDIR'] cross compilation configuration 'method' is being used ..
+    subdir = context.subdir if context._subdir == context.subdir else ''
+    suffix = '32' if context.force_32bit and abspath(envs_dir) == abspath_root_dir_envs else ''
+    return join(base_dir, subdir, dot + 'pkgs' + suffix)
+
+
+def pkgs_dir_from_tmp_pkgs_dir(base_dir):
+    return join(base_dir, '.pkgs-' + context.subdir)
 
 
 def get_help_dict():
