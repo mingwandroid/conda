@@ -285,13 +285,18 @@ class Context(Configuration):
             )
         return tuple(IndexedSet(expand(p) for p in concatv(self._envs_dirs, fixed_dirs)))
 
+    def pkgs_dir_from_tmp_pkgs_dir(base_dir):
+        return join(base_dir, '.pkgs-' + context.subdir)
+
     @property
     def pkgs_dirs(self):
         if self._pkgs_dirs:
-            return tuple(IndexedSet(expand(p) for p in self._pkgs_dirs))
+            return tuple(IndexedSet(expand(pkgs_dir_from_tmp_pkgs_dir(p)) for p in self._pkgs_dirs))
         else:
             cache_dir_name = 'pkgs32' if context.force_32bit else 'pkgs'
-            return tuple(IndexedSet(expand(join(p, cache_dir_name)) for p in (
+            # This is really saying: if the os.environ['CONDA_SUBDIR'] cross compilation configuration 'method' is being used ..
+            subdir = context.subdir if context._subdir == context.subdir else ''
+            return tuple(IndexedSet(expand(join(p, cache_dir_name, subdir)) for p in (
                 self.root_prefix,
                 self._user_data_dir,
             )))
