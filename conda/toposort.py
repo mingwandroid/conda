@@ -7,7 +7,7 @@ from .exceptions import CondaValueError
 
 log = logging.getLogger(__name__)
 
-def _toposort(data):
+def _toposort(data, yield_in_sets=False):
     """Dependencies are expressed as a dictionary whose keys are items
 and whose values are a set of dependent items. Output is a list of
 sets in topological order. The first set consists of items with no
@@ -32,9 +32,15 @@ items in the preceding sets.
         if not ordered:
             break
 
-        for item in ordered:
-            yield item
-            data.pop(item, None)
+        if yield_in_sets:
+            this_yield = set(ordered)
+            for item in ordered:
+                data.pop(item, None)
+            yield this_yield
+        else:
+            for item in ordered:
+                yield item
+                data.pop(item, None)
 
         for dep in sorted(data.values()):
             dep -= set(ordered)
