@@ -48,6 +48,7 @@ PLATFORM_DIRECTORIES = ("linux-64",
                         "linux-ppc64le",
                         "linux-armv6l",
                         "linux-armv7l",
+                        "linux-imx351uc",
                         "zos-z",
                         "noarch",
                         )
