@@ -1,0 +1,14 @@
+[package]
+name = "libconda-rs-py"
+version = "0.1.0"
+
+[lib]
+name = "libconda_rs_py"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "0.4"
+features = ["extension-module"]
+
+[dependencies]
+libconda-rs = { path = "../libconda-rs" }

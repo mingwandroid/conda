@@ -1,0 +1,5 @@
+[workspace]
+members = ["src/lib/libconda-rs",
+           "src/lib/libconda-rs-py",
+           "src/bin/core/conda-rs",
+           "src/bin/core/conda-rs-py"]

@@ -1,0 +1,10 @@
+[package]
+name = "libconda-rs"
+version = "0.1.0"
+
+[lib]
+name = "libconda_rs"
+path = "src/lib.rs"
+
+[dependencies]
+zstd = "0.4.19"

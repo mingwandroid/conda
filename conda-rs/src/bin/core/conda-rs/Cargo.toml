@@ -1,0 +1,12 @@
+[package]
+name = "conda-rs"
+version = "0.1.0"
+authors = ["Ray Donnelly <mingw.android@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+libconda-rs = { path = "../../../lib/libconda-rs" }
+
+[[bin]]
+name = "conda-rs"
+path = "src/main.rs"

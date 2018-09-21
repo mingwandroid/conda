@@ -1,0 +1,16 @@
+[package]
+name = "conda-rs-py"
+version = "0.1.0"
+authors = ["Ray Donnelly <mingw.android@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "conda_rs_py"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "0.4"
+features = ["extension-module"]
+
+[dependencies]
+libconda-rs = { path = "../../../lib/libconda-rs" }
