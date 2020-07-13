@@ -645,7 +645,7 @@ class _Activator(object):
                 "PYTHONIOENCODING": ctypes.cdll.kernel32.GetACP(),
             })
         pass
-
+s
     def _update_prompt(self, set_vars, conda_prompt_modifier):
         pass
 
