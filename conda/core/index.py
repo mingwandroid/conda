@@ -180,12 +180,12 @@ def _supplement_index_with_system(index):
             rec = _make_virtual_package('__' + libc_family, libc_version)
             index[rec] = rec
 
-    if is_linux or is_osx:
-        rec = _make_virtual_package('__unix')
-        index[rec] = rec
-    elif context.subdir.startswith('win-'):
-        rec = _make_virtual_package('__win')
-        index[rec] = rec
+    # if is_linux or is_osx:
+    #     rec = _make_virtual_package('__unix')
+    #     index[rec] = rec
+    # elif context.subdir.startswith('win-'):
+    #     rec = _make_virtual_package('__win')
+    #     index[rec] = rec
 
     archspec_name = get_archspec_name()
     archspec_name = os.getenv("CONDA_OVERRIDE_ARCHSPEC", archspec_name)

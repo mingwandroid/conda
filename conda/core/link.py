@@ -1026,6 +1026,9 @@ class UnlinkLinkTransaction(object):
             for namekey in sorted(change_report.new_precs, key=convert_namekey):
                 link_prec = change_report.new_precs[namekey]
                 display_key = strip_global(namekey)
+                schannel = channel_filt(text_type(link_prec.channel.canonical_name))
+                if schannel:
+                    display_key += '  ' + schannel
                 add_single(display_key, link_prec.record_id())
 
         if change_report.removed_precs:

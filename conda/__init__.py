@@ -19,7 +19,6 @@ if sys.version_info[0] == 2:
     reload(sys)  # NOQA
     sys.setdefaultencoding('utf-8')
 
-from ._vendor.auxlib.packaging import get_version
 from .common.compat import text_type, iteritems
 
 
@@ -30,7 +29,7 @@ __all__ = (
 )
 
 __name__ = "conda"
-__version__ = get_version(__file__)
+__version__ = "4.8.4.post50+fb74e263b"
 __author__ = "Anaconda, Inc."
 __email__ = "conda@continuum.io"
 __license__ = "BSD-3-Clause"

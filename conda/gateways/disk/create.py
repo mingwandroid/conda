@@ -47,8 +47,10 @@ class TemporaryDirectory(object):
     # Handle mkdtemp raising an exception
     name = None
     _closed = False
+    _delete = True
 
-    def __init__(self, suffix="", prefix='tmp', dir=None):
+    def __init__(self, suffix="", prefix='tmp', dir=None, delete=True):
+        self._delete = delete
         self.name = tempfile.mkdtemp(suffix, prefix, dir)
 
     def __repr__(self):
@@ -59,7 +61,7 @@ class TemporaryDirectory(object):
 
     def cleanup(self, _warn=False, _warnings=_warnings):
         from .delete import rm_rf as _rm_rf
-        if self.name and not self._closed:
+        if self.name and not self._closed and self._delete:
             try:
                 _rm_rf(self.name)
             except (TypeError, AttributeError) as ex:
