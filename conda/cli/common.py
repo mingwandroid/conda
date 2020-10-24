@@ -93,13 +93,13 @@ def arg2spec(arg, json=False, update=False):
 def specs_from_args(args, json=False):
     return [arg2spec(arg, json=json) for arg in args]
 
-
+# ~=
 spec_pat = re.compile(r'(?P<name>[^=<>!\s]+)'  # package name  # lgtm [py/regex/unmatchable-dollar]
                       r'\s*'  # ignore spaces
                       r'('
                       r'(?P<cc>=[^=]+(=[^=]+)?)'  # conda constraint
                       r'|'
-                      r'(?P<pc>(?:[=!]=|[><]=?).+)'  # new (pip-style) constraint(s)
+                      r'(?P<pc>(?:[=!]=|[><]=?|~=).+)'  # new (pip-style) constraint(s)
                       r')?$',
                       re.VERBOSE)  # lgtm [py/regex/unmatchable-dollar]
 
@@ -116,7 +116,13 @@ def spec_from_line(line):
     if cc:
         return name + cc.replace('=', ' ')
     elif pc:
-        return name + ' ' + pc.replace(' ', '')
+        if pc.startswith('~='):
+            assert pc.count('~=') == 1, "Overly complex spec not handled {}".format(line)
+            ver = pc.replace('~=', '')
+            ver2 = '.'.join(ver.split('.')[:-1]) + '.*'
+            return name + ' >=' + ver + ',==' + ver2
+        else:
+            return name + ' ' + pc.replace(' ', '')
     else:
         return name
 
