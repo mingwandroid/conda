@@ -7,7 +7,7 @@ from errno import ENOENT
 import fnmatch
 from logging import getLogger
 from os import environ, getcwd, makedirs, rename, rmdir, unlink, walk
-from os.path import abspath, basename, dirname, exists, isdir, isfile, join, normpath, split
+from os.path import abspath, basename, dirname, exists, isdir, isfile, join, normpath, split, splitext
 import shutil
 from subprocess import CalledProcessError, STDOUT, check_output
 import sys
@@ -121,7 +121,7 @@ def unlink_or_rename_to_trash(path):
                     dest_fn = path + ".conda_trash"
                     counter = 1
                     while isfile(dest_fn):
-                        dest_fn = dest_fn.splitext[0] + '.conda_trash_{}'.format(counter)
+                        dest_fn = splitext(dest_fn)[0] + '.conda_trash_{}'.format(counter)
                         counter += 1
                     out = "< empty >"
                     try:
